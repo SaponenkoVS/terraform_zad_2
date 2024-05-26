@@ -12,7 +12,7 @@ provider "aws" {
   secret_key = "mock_secret_key"
   region     = "us-east-1"
 
-  s3 {
-    endpoint = "http://localhost:4566"
+  endpoints {
+    s3 = "http://localhost:4566"
   }
 }
