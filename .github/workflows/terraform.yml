@@ -12,6 +12,14 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
 
+    services:
+      localstack:
+        image: localstack/localstack
+        ports:
+          - 4566:4566
+        options: >-
+          --entrypoint /bin/sh -c "until curl -s http://localhost:4566; do sleep 1; done"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -20,6 +28,14 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.0.0
+
+      - name: Wait for Localstack to be ready
+        run: |
+          until curl -s http://localhost:4566; do
+            echo "Waiting for Localstack..."
+            sleep 5
+          done
+        shell: bash
 
       - name: Terraform Init
         run: terraform init
